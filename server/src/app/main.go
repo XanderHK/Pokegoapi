@@ -43,8 +43,11 @@ func main() {
 
     fmt.Println(responseObject.Name)
 
-    for i := 0; i < len(responseObject.Pokemon); i++ {
-        fmt.Println(responseObject.Pokemon[i].Species.Name)
-    }
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        for i := 0; i < len(responseObject.Pokemon); i++ {
+            fmt.Fprintf(w, responseObject.Pokemon[i].Species.Name)
+        }
+    })
 
+    http.ListenAndServe(":9990", nil)
 }
