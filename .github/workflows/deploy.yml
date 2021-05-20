@@ -19,7 +19,7 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
         with:
           source: "."
-          target: "/home/xander/go/"
+          target: "/var/www/pokeapi"
           debug: true
 
       - name: Executing remote command
