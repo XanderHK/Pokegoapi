@@ -19,7 +19,7 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
         with:
           source: "."
-          target: "xander@vps-a7383e64:~/go/pokegoapi"
+          target: "xander@vps-a7383e64:~/go"
           debug: true
 
       - name: Executing remote command
