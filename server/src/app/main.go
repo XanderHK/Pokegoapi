@@ -42,7 +42,6 @@ func main() {
     json.Unmarshal(responseData, &responseObject)
 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        
     fmt.Fprintf(w, responseObject.Name)
         for i := 0; i < len(responseObject.Pokemon); i++ {
             fmt.Fprintf(w, responseObject.Pokemon[i].Species.Name)
