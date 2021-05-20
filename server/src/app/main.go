@@ -41,14 +41,14 @@ func main() {
     var responseObject Response
     json.Unmarshal(responseData, &responseObject)
 
-    fmt.Println(responseObject.Name)
-
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        
+    fmt.Fprintf(w, responseObject.Name)
         for i := 0; i < len(responseObject.Pokemon); i++ {
             fmt.Fprintf(w, responseObject.Pokemon[i].Species.Name)
         }
     })
 
     http.ListenAndServe(":9990", nil)
-    
+
 }
