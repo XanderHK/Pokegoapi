@@ -19,7 +19,7 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
         with:
           source: "."
-          target: "/var/www/pokeapi"
+          target: "~/go/pokegoapi"
 
       - name: Executing remote command
         uses: appleboy/ssh-action@master
