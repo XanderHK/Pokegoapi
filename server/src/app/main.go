@@ -140,7 +140,12 @@ func router () {
     http.ListenAndServe(":9990", nil)
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func getAllPokemonNames(w http.ResponseWriter, r *http.Request) {
+    enableCors(&w)
     response, err := http.Get("https://pokeapi.co/api/v2/pokemon-species/?limit=20000") 
     if err != nil {
         fmt.Print(err.Error())
@@ -173,6 +178,7 @@ func getAllPokemonNames(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPokemonById(w http.ResponseWriter, r *http.Request) {
+    enableCors(&w)
     start := time.Now()
     pokemonId := r.URL.Query()["id"]
     if pokemonId[0] == "" {
