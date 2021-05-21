@@ -9,7 +9,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"time"
 )
 
 type ResponseAll struct {
@@ -23,13 +22,9 @@ type PokemonSpeciesResponse struct {
 }
 
 type PokemonEvoChainResponse struct {
-    Chain struct {
-        EvolvesTo []struct{
+    Chain struct{
             EvolvesTo []struct{
-                Species struct {
-                    Name string `json:"name"`
-                } `json:"species"`
-            } `json:"evolves_to"`
+        EvolvesTo []struct{
             Species struct {
                 Name string `json:"name"`
             } `json:"species"`
@@ -37,6 +32,10 @@ type PokemonEvoChainResponse struct {
         Species struct {
             Name string `json:"name"`
         } `json:"species"`
+    } `json:"evolves_to"`
+    Species struct {
+        Name string `json:"name"`
+    } `json:"species"`
     } `json:"chain"`
 }
 
@@ -179,7 +178,6 @@ func getAllPokemonNames(w http.ResponseWriter, r *http.Request) {
 
 func getPokemonById(w http.ResponseWriter, r *http.Request) {
     enableCors(&w)
-    start := time.Now()
     pokemonId := r.URL.Query()["id"]
     if pokemonId[0] == "" {
         fmt.Fprint(w, "error")
@@ -209,11 +207,8 @@ func getPokemonById(w http.ResponseWriter, r *http.Request) {
 
     var types []string
     for _, pokemonType := range responseObject.Types {
-        fmt.Println(pokemonType)
         types = append(types, pokemonType.Type.Name)
     }
-
-    fmt.Println(responseObject.Stats)
 
     var stats []PokemonStat
     for _, pokemonStat := range responseObject.Stats {
@@ -234,8 +229,6 @@ func getPokemonById(w http.ResponseWriter, r *http.Request) {
         Stats: stats,
     })
     fmt.Fprint(w, string(result))
-    elapsed := time.Since(start)
-    fmt.Printf("Request took: %s", elapsed)
 }
 
 func getPokemonDesc(url string) string{
@@ -294,13 +287,21 @@ func getPokemonEvolutionChain(url string) []string {
 
     var responseObjectEvoChain PokemonEvoChainResponse
     json.Unmarshal(responseDataEvoChain, &responseObjectEvoChain)
+
     var pokemonEvoChainNames []string
 
-    pokemonEvoChainNames = append(pokemonEvoChainNames, responseObjectEvoChain.Chain.Species.Name, responseObjectEvoChain.Chain.EvolvesTo[0].Species.Name, responseObjectEvoChain.Chain.EvolvesTo[0].EvolvesTo[0].Species.Name)
+    pokemonEvoChainNames = append(pokemonEvoChainNames, responseObjectEvoChain.Chain.Species.Name)
 
-
+    if len(responseObjectEvoChain.Chain.EvolvesTo) > 0 {
+        pokemonEvoChainNames = append(pokemonEvoChainNames, responseObjectEvoChain.Chain.EvolvesTo[0].Species.Name)
+        if len(responseObjectEvoChain.Chain.EvolvesTo[0].EvolvesTo) > 0 {
+            pokemonEvoChainNames = append(pokemonEvoChainNames, responseObjectEvoChain.Chain.EvolvesTo[0].EvolvesTo[0].Species.Name)
+        }
+    }
+    
     return pokemonEvoChainNames
 }
+
 
 func getPokemonSprite(name string) string {
     response, err := http.Get("https://pokeapi.co/api/v2/pokemon/" + name)
