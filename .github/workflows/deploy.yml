@@ -28,4 +28,6 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSHKEY }}
-          script: go build server/src/app/main.go
+          script: |
+            cd ~/go/pokegoapi
+            go build server/src/app/main.go
