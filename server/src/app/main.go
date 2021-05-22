@@ -332,4 +332,3 @@ func getPokemonSprite(name string) string {
 
     return responseObject.Sprites.Front
 }
-//
