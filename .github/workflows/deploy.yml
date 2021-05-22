@@ -38,5 +38,5 @@ jobs:
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSHKEY }}
           script: |
-            systemctl restart goweb.service &&
+            sudo systemctl restart goweb.service &&
             systemctl status goweb 
