@@ -23,8 +23,12 @@ type PokemonSpeciesResponse struct {
 
 type PokemonEvoChainResponse struct {
     Chain struct{
-            EvolvesTo []struct{
         EvolvesTo []struct{
+            EvolvesTo []struct{
+                Species struct {
+                    Name string `json:"name"`
+                } `json:"species"`
+            } `json:"evolves_to"`
             Species struct {
                 Name string `json:"name"`
             } `json:"species"`
@@ -32,12 +36,22 @@ type PokemonEvoChainResponse struct {
         Species struct {
             Name string `json:"name"`
         } `json:"species"`
-    } `json:"evolves_to"`
-    Species struct {
-        Name string `json:"name"`
-    } `json:"species"`
     } `json:"chain"`
 }
+
+
+// type Test struct {
+    
+// }
+
+// type Example struct {
+//     EvolvesTo []struct{
+//         *Example
+//     }
+//     Species struct {
+//         Name string `json:"name"`
+//     } `json:"species"`
+// }
 
 type PokemonStatsResponse struct {
     BaseStat int `json:"base_stat"`
@@ -122,8 +136,6 @@ type PokemonStat struct {
     Name string `json:"name"`
     Amount int `json:"amount"`
 }
-
-
 
 
 func main() {
@@ -301,7 +313,6 @@ func getPokemonEvolutionChain(url string) []string {
     
     return pokemonEvoChainNames
 }
-
 
 func getPokemonSprite(name string) string {
     response, err := http.Get("https://pokeapi.co/api/v2/pokemon/" + name)
