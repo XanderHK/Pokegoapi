@@ -39,20 +39,6 @@ type PokemonEvoChainResponse struct {
     } `json:"chain"`
 }
 
-
-// type Test struct {
-    
-// }
-
-// type Example struct {
-//     EvolvesTo []struct{
-//         *Example
-//     }
-//     Species struct {
-//         Name string `json:"name"`
-//     } `json:"species"`
-// }
-
 type PokemonStatsResponse struct {
     BaseStat int `json:"base_stat"`
     Stat struct {
@@ -70,7 +56,6 @@ type PokemonSingleResponse struct {
     Species PokemonSpecies `json:"species"`
     Stats []PokemonStatsResponse `json:"stats"`
 }
-
 
 type PokemonAll struct {
     Name string `json:"name"`
@@ -270,6 +255,25 @@ func getPokemonDesc(url string) string{
     return firstEnglishDesc
 }
 
+func getPokemonSprite(name string) string {
+    response, err := http.Get("https://pokeapi.co/api/v2/pokemon/" + name)
+
+        if err != nil {
+        fmt.Print(err.Error())
+        os.Exit(1)
+    }
+
+    responseData, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    var responseObject PokemonSingleResponse
+    json.Unmarshal(responseData, &responseObject)
+
+    return responseObject.Sprites.Front
+}
+
 func getPokemonEvolutionChain(url string) []string {
     responseSpecies, err := http.Get(url)
     if err != nil {
@@ -295,7 +299,14 @@ func getPokemonEvolutionChain(url string) []string {
     responseDataEvoChain, err := ioutil.ReadAll(responseEvoChain.Body)
     if err != nil {
         log.Fatal(err)
-    }   
+    }
+
+    // var test map[string]interface{}
+    // json.Unmarshal([]byte(responseDataEvoChain), &test)
+    // evolvesTo := test["chain"].(map[string]interface{})["evolves_to"]
+
+    // fmt.Println(evolvesTo)
+
 
     var responseObjectEvoChain PokemonEvoChainResponse
     json.Unmarshal(responseDataEvoChain, &responseObjectEvoChain)
@@ -314,21 +325,7 @@ func getPokemonEvolutionChain(url string) []string {
     return pokemonEvoChainNames
 }
 
-func getPokemonSprite(name string) string {
-    response, err := http.Get("https://pokeapi.co/api/v2/pokemon/" + name)
 
-        if err != nil {
-        fmt.Print(err.Error())
-        os.Exit(1)
-    }
-
-    responseData, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    var responseObject PokemonSingleResponse
-    json.Unmarshal(responseData, &responseObject)
-
-    return responseObject.Sprites.Front
-}
+// func filterSprites(a map[string]interface{}){
+//     fmt.Println(a)
+// }
