@@ -7,7 +7,7 @@ import (
 	Pokemon "github.com/XanderHK/Pokegoapi/server/src/app"
 )
 
-//
+// Exported function that invokes the routes function and creates the server
 func Start() {
 	routes()
 	http.ListenAndServe(":9990", nil)
@@ -38,7 +38,7 @@ func routes() {
 	})
 }
 
-//
+// Function that enables cors so that you can fetch the information using axios
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }

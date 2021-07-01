@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"regexp"
@@ -40,14 +41,26 @@ func init() {
 func Pokemon() {
 	start := time.Now()
 	amountOfEntries := getPokemonEntries()
+	onePercent := math.Round(float64(amountOfEntries) / 100)
+	progress := 0
 
 	for i := 1; i < amountOfEntries; i++ {
 		pokemon := parseSinglePokemon(i)
 		collection.InsertOne(ctx, pokemon)
+
+		if i%int(onePercent) == 0 {
+			progress++
+		}
+
+		if i == amountOfEntries {
+			progress++
+		}
+
+		fmt.Printf("\r%d%% completed", progress)
 	}
 	end := time.Since(start)
 
-	fmt.Printf("Importing all Pokémons took: %s ", end)
+	fmt.Printf("\n Importing all Pokémons took: %s ", end)
 }
 
 // function that gets all pokemons and returns the length a.k.a. the amount of pokemon
@@ -61,7 +74,8 @@ func getPokemonEntries() int {
 	return amountOfEntries
 }
 
-//
+// Gets a pokemon and makes subsequent function calls / http request to get the other necessary data.
+// Then it turns it into a byte slice that is a BSON object that can be interpreted and stored in mongodb
 func parseSinglePokemon(id int) PokemonTypes.PokemonSingleResultBson {
 	responseData := httpRequest("https://pokeapi.co/api/v2/pokemon/" + strconv.Itoa(id))
 	var responseObject PokemonTypes.PokemonSingleResponse
@@ -103,7 +117,7 @@ func parseSinglePokemon(id int) PokemonTypes.PokemonSingleResultBson {
 	return result
 }
 
-//
+// Gets the evolution chain url from species
 func getPokemonEvolutionUrl(url string) string {
 	responseData := httpRequest(url)
 	var responseObject PokemonTypes.PokemonSpeciesResponse
@@ -111,7 +125,7 @@ func getPokemonEvolutionUrl(url string) string {
 	return responseObject.EvoChain.Url
 }
 
-//
+// Gets all the evolutions of a pokemon and returns them.
 func getPokemonEvolutionChain(url string) []string {
 	responseData := httpRequest(url)
 	var responseObject PokemonTypes.Chain
@@ -122,7 +136,7 @@ func getPokemonEvolutionChain(url string) []string {
 	return evolutions
 }
 
-//
+// Recursive function that searches the structure for all evolutions of a specific pokemon
 func WalkEvolutionChain(evolesTo []PokemonTypes.EvolvesTo) []string {
 	var evolutions []string
 
@@ -134,7 +148,7 @@ func WalkEvolutionChain(evolesTo []PokemonTypes.EvolvesTo) []string {
 	return evolutions
 }
 
-//
+// Gets the default sprite from pokémon, this is used to show the different evolutions
 func getPokemonSprite(name string) string {
 	responseData := httpRequest("https://pokeapi.co/api/v2/pokemon/" + name)
 
@@ -144,7 +158,7 @@ func getPokemonSprite(name string) string {
 	return responseObject.Sprites.Front
 }
 
-//
+// Uses the species URL of the pokemon to get the first english description it finds
 func getPokemonDesc(url string) string {
 	responseData := httpRequest(url)
 

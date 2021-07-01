@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Creates a scanner and calls a function depending on input
 func Scanner() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {

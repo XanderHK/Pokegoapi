@@ -6,5 +6,7 @@ import (
 
 func main() {
 	server.Start()
-	// go commands.Scanner()
+	// go server.Start()
+	// figure out how to use on vps lol (gives bad gateway with reverse proxy, maybe split in seperate projects)
+	// commands.Scanner()
 }
