@@ -4,15 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
-	"net/http"
-	"os"
-	"regexp"
 	"strconv"
 	"time"
 
+	"github.com/XanderHK/Pokegoapi/server/src/app/functions"
 	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/app/types"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -40,7 +37,7 @@ func init() {
 // function that can be called from the main.go that makes the initial call for storing all pokemon in the db
 func Pokemon() {
 	start := time.Now()
-	amountOfEntries := getPokemonEntries()
+	amountOfEntries := functions.GetPokemonEntries()
 	onePercent := math.Round(float64(amountOfEntries) / 100)
 	progress := 0
 
@@ -63,31 +60,20 @@ func Pokemon() {
 	fmt.Printf("\n Importing all Pokémons took: %s ", end)
 }
 
-// function that gets all pokemons and returns the length a.k.a. the amount of pokemon
-func getPokemonEntries() int {
-	url := "https://pokeapi.co/api/v2/pokemon-species/?limit=20000"
-	responseData := httpRequest(url)
-	var responseObject PokemonTypes.ResponseAll
-	json.Unmarshal(responseData, &responseObject)
-
-	amountOfEntries := len(responseObject.Pokemon)
-	return amountOfEntries
-}
-
 // Gets a pokemon and makes subsequent function calls / http request to get the other necessary data.
 // Then it turns it into a byte slice that is a BSON object that can be interpreted and stored in mongodb
 func parseSinglePokemon(id int) PokemonTypes.PokemonSingleResultBson {
-	responseData := httpRequest("https://pokeapi.co/api/v2/pokemon/" + strconv.Itoa(id))
+	responseData := functions.GetRequest("https://pokeapi.co/api/v2/pokemon/" + strconv.Itoa(id))
 	var responseObject PokemonTypes.PokemonSingleResponse
 	json.Unmarshal(responseData, &responseObject)
 
-	description := getPokemonDesc(responseObject.Species.Url)
+	description := functions.GetPokemonDesc(responseObject.Species.Url)
 
-	evolutionUrl := getPokemonEvolutionUrl(responseObject.Species.Url)
-	evolutions := getPokemonEvolutionChain(evolutionUrl)
+	evolutionUrl := functions.GetPokemonEvolutionUrl(responseObject.Species.Url)
+	evolutions := functions.GetPokemonEvolutionChain(evolutionUrl)
 	var evolutionSprites []string
 	for _, evo := range evolutions {
-		evolutionSprites = append(evolutionSprites, getPokemonSprite(evo))
+		evolutionSprites = append(evolutionSprites, functions.GetPokemonSprite(evo))
 	}
 
 	var types []string
@@ -115,82 +101,4 @@ func parseSinglePokemon(id int) PokemonTypes.PokemonSingleResultBson {
 	}
 
 	return result
-}
-
-// Gets the evolution chain url from species
-func getPokemonEvolutionUrl(url string) string {
-	responseData := httpRequest(url)
-	var responseObject PokemonTypes.PokemonSpeciesResponse
-	json.Unmarshal(responseData, &responseObject)
-	return responseObject.EvoChain.Url
-}
-
-// Gets all the evolutions of a pokemon and returns them.
-func getPokemonEvolutionChain(url string) []string {
-	responseData := httpRequest(url)
-	var responseObject PokemonTypes.Chain
-	json.Unmarshal(responseData, &responseObject)
-
-	evolutions := []string{responseObject.Chain.Species.Name}
-	evolutions = append(evolutions, WalkEvolutionChain(responseObject.Chain.EvolvesTo)...)
-	return evolutions
-}
-
-// Recursive function that searches the structure for all evolutions of a specific pokemon
-func WalkEvolutionChain(evolesTo []PokemonTypes.EvolvesTo) []string {
-	var evolutions []string
-
-	if len(evolesTo) > 0 {
-		evolutions = append(evolutions, evolesTo[0].Species.Name)
-		evolutions = append(evolutions, WalkEvolutionChain(evolesTo[0].EvolvesTo)...)
-	}
-
-	return evolutions
-}
-
-// Gets the default sprite from pokémon, this is used to show the different evolutions
-func getPokemonSprite(name string) string {
-	responseData := httpRequest("https://pokeapi.co/api/v2/pokemon/" + name)
-
-	var responseObject PokemonTypes.PokemonSingleResponse
-	json.Unmarshal(responseData, &responseObject)
-
-	return responseObject.Sprites.Front
-}
-
-// Uses the species URL of the pokemon to get the first english description it finds
-func getPokemonDesc(url string) string {
-	responseData := httpRequest(url)
-
-	var responseObject PokemonTypes.PokemonDescriptions
-	json.Unmarshal(responseData, &responseObject)
-
-	var firstEnglishDesc string
-	for _, desc := range responseObject.Entries {
-		if desc.Language.Name == "en" {
-			re := regexp.MustCompile(`\r?\n|\f`)
-			firstEnglishDesc = re.ReplaceAllString(desc.FlavorText, " ")
-			break
-		}
-	}
-
-	return firstEnglishDesc
-}
-
-// little wrapper function for http.get to avoid code duplication
-func httpRequest(url string) []byte {
-	response, err := http.Get(url)
-
-	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
-	}
-
-	responseData, err := ioutil.ReadAll(response.Body)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return responseData
 }
