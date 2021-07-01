@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	go server.Start()
-	commands.Scanner()
+	server.Start()
+	go commands.Scanner()
 }
