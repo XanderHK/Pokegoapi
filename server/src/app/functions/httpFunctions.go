@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+//
 func GetRequest(url string) []byte {
 	response, err := http.Get(url)
 

@@ -77,3 +77,30 @@ func GetPokemonEntries() int {
 	amountOfEntries := len(responseObject.Pokemon)
 	return amountOfEntries
 }
+
+//
+func GetEvolutionSprites(evolutions []string) []string {
+	var evolutionSprites []string
+	for _, evo := range evolutions {
+		evolutionSprites = append(evolutionSprites, GetPokemonSprite(evo))
+	}
+	return evolutionSprites
+}
+
+//
+func GetPokemonTypes(types []PokemonTypes.PokemonTypes) []string {
+	var returnTypes []string
+	for _, pokemonType := range types {
+		returnTypes = append(returnTypes, pokemonType.Type.Name)
+	}
+	return returnTypes
+}
+
+//
+func GetPokemonStats(stats []PokemonTypes.PokemonStatsResponse) []PokemonTypes.PokemonStat {
+	var returnStats []PokemonTypes.PokemonStat
+	for _, pokemonStat := range stats {
+		returnStats = append(returnStats, PokemonTypes.PokemonStat{Name: pokemonStat.Stat.Name, Amount: pokemonStat.BaseStat})
+	}
+	return returnStats
+}

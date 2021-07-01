@@ -68,23 +68,11 @@ func parseSinglePokemon(id int) PokemonTypes.PokemonSingleResultBson {
 	json.Unmarshal(responseData, &responseObject)
 
 	description := functions.GetPokemonDesc(responseObject.Species.Url)
-
 	evolutionUrl := functions.GetPokemonEvolutionUrl(responseObject.Species.Url)
 	evolutions := functions.GetPokemonEvolutionChain(evolutionUrl)
-	var evolutionSprites []string
-	for _, evo := range evolutions {
-		evolutionSprites = append(evolutionSprites, functions.GetPokemonSprite(evo))
-	}
-
-	var types []string
-	for _, pokemonType := range responseObject.Types {
-		types = append(types, pokemonType.Type.Name)
-	}
-
-	var stats []PokemonTypes.PokemonStat
-	for _, pokemonStat := range responseObject.Stats {
-		stats = append(stats, PokemonTypes.PokemonStat{Name: pokemonStat.Stat.Name, Amount: pokemonStat.BaseStat})
-	}
+	evolutionSprites := functions.GetEvolutionSprites(evolutions)
+	types := functions.GetPokemonTypes(responseObject.Types)
+	stats := functions.GetPokemonStats(responseObject.Stats)
 
 	result := PokemonTypes.PokemonSingleResultBson{
 		Id:               responseObject.Id,

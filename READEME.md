@@ -1,0 +1,1 @@
+Small API written in GO that makes request to the official Pokéapi and formats the response to fit my other project(s) needs, currently just my React-Pokedex

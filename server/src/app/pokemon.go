@@ -39,21 +39,11 @@ func GetPokemonById(pokemonId []string) string {
 
 	if responseObject.Species.Url != "" {
 		description := functions.GetPokemonDesc(responseObject.Species.Url)
-		evolutions := functions.GetPokemonEvolutionChain(responseObject.Species.Url)
-		var evolutionSprites []string
-		for _, evo := range evolutions {
-			evolutionSprites = append(evolutionSprites, functions.GetPokemonSprite(evo))
-		}
-
-		var types []string
-		for _, pokemonType := range responseObject.Types {
-			types = append(types, pokemonType.Type.Name)
-		}
-
-		var stats []PokemonTypes.PokemonStat
-		for _, pokemonStat := range responseObject.Stats {
-			stats = append(stats, PokemonTypes.PokemonStat{Name: pokemonStat.Stat.Name, Amount: pokemonStat.BaseStat})
-		}
+		evolutionUrl := functions.GetPokemonEvolutionUrl(responseObject.Species.Url)
+		evolutions := functions.GetPokemonEvolutionChain(evolutionUrl)
+		evolutionSprites := functions.GetEvolutionSprites(evolutions)
+		types := functions.GetPokemonTypes(responseObject.Types)
+		stats := functions.GetPokemonStats(responseObject.Stats)
 
 		result, _ := json.Marshal(PokemonTypes.PokemonSingleResult{
 			Id:               responseObject.Id,
