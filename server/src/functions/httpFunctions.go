@@ -25,3 +25,11 @@ func GetRequest(url string) []byte {
 
 	return responseData
 }
+
+func Cors() {
+
+}
+
+func HttpHandler() {
+
+}

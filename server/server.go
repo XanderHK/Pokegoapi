@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/XanderHK/Pokegoapi/environment"
 	Pokemon "github.com/XanderHK/Pokegoapi/server/src/app"
 )
 
 // Exported function that invokes the routes function and creates the server
 func Start() {
 	routes()
-	http.ListenAndServe(":9990", nil)
+
+	http.ListenAndServe(":"+environment.GetEnvVariable("SERVER_PORT"), nil)
 }
 
 //
@@ -19,6 +21,7 @@ func routes() {
 		enableCors(&rw)
 
 		jsonStringResult := Pokemon.GetAllPokemonNames()
+
 		fmt.Fprint(rw, jsonStringResult)
 	})
 

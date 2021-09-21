@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"regexp"
 
-	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/app/types"
+	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/types"
 )
 
 // Gets the evolution chain url from species

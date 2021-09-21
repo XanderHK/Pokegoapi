@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/XanderHK/Pokegoapi/server/src/app/functions"
-	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/app/types"
+	"github.com/XanderHK/Pokegoapi/server/src/functions"
+	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/types"
 )
 
 //

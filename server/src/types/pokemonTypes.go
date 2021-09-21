@@ -13,25 +13,6 @@ type PokemonSpeciesResponse struct {
 }
 
 //
-type PokemonEvoChainResponse struct {
-	Chain struct {
-		EvolvesTo []struct {
-			EvolvesTo []struct {
-				Species struct {
-					Name string `json:"name"`
-				} `json:"species"`
-			} `json:"evolves_to"`
-			Species struct {
-				Name string `json:"name"`
-			} `json:"species"`
-		} `json:"evolves_to"`
-		Species struct {
-			Name string `json:"name"`
-		} `json:"species"`
-	} `json:"chain"`
-}
-
-//
 type PokemonStatsResponse struct {
 	BaseStat int `json:"base_stat"`
 	Stat     struct {

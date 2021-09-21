@@ -1,4 +1,4 @@
-package importPokemon
+package commands
 
 import (
 	"context"
@@ -9,8 +9,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/XanderHK/Pokegoapi/server/src/app/functions"
-	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/app/types"
+	"github.com/XanderHK/Pokegoapi/environment"
+	"github.com/XanderHK/Pokegoapi/server/src/functions"
+	PokemonTypes "github.com/XanderHK/Pokegoapi/server/src/types"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -20,7 +21,9 @@ var ctx = context.TODO()
 
 // init func to initialize the db connection
 func init() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	clientOptions := options.Client().
+		ApplyURI(environment.GetEnvVariable("DATABASE_HOST"))
+
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -31,11 +34,12 @@ func init() {
 		log.Fatal(err)
 	}
 
-	collection = client.Database("pokemon_storage").Collection("pokemon_collection")
+	collection = client.Database(environment.GetEnvVariable("DATABASE_NAME")).
+		Collection(environment.GetEnvVariable("DATABASE_COLLECTION"))
 }
 
 // function that can be called from the main.go that makes the initial call for storing all pokemon in the db
-func Pokemon() {
+func importPokemon() {
 	start := time.Now()
 	amountOfEntries := functions.GetPokemonEntries()
 	onePercent := math.Round(float64(amountOfEntries) / 100)
