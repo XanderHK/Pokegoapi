@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/XanderHK/Pokegoapi/environment"
 	Pokemon "github.com/XanderHK/Pokegoapi/server/src/app"
 )
 
@@ -12,7 +11,7 @@ import (
 func Start() {
 	routes()
 
-	http.ListenAndServe(":"+environment.GetEnvVariable("SERVER_PORT"), nil)
+	http.ListenAndServe(":9990", nil)
 }
 
 //
