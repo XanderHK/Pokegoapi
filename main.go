@@ -5,7 +5,6 @@ import (
 
 	"github.com/XanderHK/Pokegoapi/environment"
 	"github.com/XanderHK/Pokegoapi/server"
-	"github.com/XanderHK/Pokegoapi/server/src/commands"
 )
 
 func main() {
@@ -36,8 +35,8 @@ func main() {
 	// fmt.Println(totalMs / float64(len(times)) * 7)
 	// fmt.Println(totalMs / float64(len(times)) * 7 * 898 / 1000 / 60)
 
-	// server.Start()
-	go server.Start()
-	//figure out how to use on vps lol (gives bad gateway with reverse proxy, maybe split in seperate projects)
-	commands.Scanner()
+	server.Start()
+	// go server.Start()
+	// //figure out how to use on vps lol (gives bad gateway with reverse proxy, maybe split in seperate projects)
+	// commands.Scanner()
 }
