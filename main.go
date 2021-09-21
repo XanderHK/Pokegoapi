@@ -1,15 +1,12 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/XanderHK/Pokegoapi/environment"
 	"github.com/XanderHK/Pokegoapi/server"
 )
 
 func main() {
-	result := environment.GetEnvVariable("SERVER_PORT")
-	fmt.Println(result)
+	// result := environment.GetEnvVariable("SERVER_PORT")
+	// fmt.Println(result)
 	// var times []string
 
 	// for i := 1; i <= 898; i++ {
