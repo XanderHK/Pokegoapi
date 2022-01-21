@@ -1,36 +1,43 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/XanderHK/Pokegoapi/server"
 )
 
 func main() {
 	// result := environment.GetEnvVariable("SERVER_PORT")
 	// fmt.Println(result)
-	// var times []string
+	var times []string
 
-	// for i := 1; i <= 898; i++ {
-	// 	start := time.Now()
+	for i := 1; i <= 898; i++ {
+		start := time.Now()
 
-	// 	resp, _ := http.Get("https://pokeapi.co/api/v2/pokemon/" + strconv.Itoa(i))
+		resp, _ := http.Get("https://pokeapi.co/api/v2/pokemon/" + strconv.Itoa(i))
 
-	// 	ioutil.ReadAll(resp.Body)
+		ioutil.ReadAll(resp.Body)
 
-	// 	elapsed := time.Since(start)
+		elapsed := time.Since(start)
 
-	// 	times = append(times, elapsed.String())
-	// }
+		times = append(times, elapsed.String())
+	}
 
-	// var totalMs float64
-	// for _, v := range times {
-	// 	timeStringParts := strings.Split(v, "ms")
-	// 	floatValue, _ := strconv.ParseFloat(timeStringParts[0], 64)
-	// 	totalMs += floatValue
-	// }
+	var totalMs float64
+	for _, v := range times {
+		timeStringParts := strings.Split(v, "ms")
+		floatValue, _ := strconv.ParseFloat(timeStringParts[0], 64)
+		totalMs += floatValue
+	}
 
-	// fmt.Println(totalMs / float64(len(times)))
-	// fmt.Println(totalMs / float64(len(times)) * 7)
-	// fmt.Println(totalMs / float64(len(times)) * 7 * 898 / 1000 / 60)
+	fmt.Println(totalMs / float64(len(times)))
+	fmt.Println(totalMs / float64(len(times)) * 7)
+	fmt.Println(totalMs / float64(len(times)) * 7 * 898 / 1000 / 60)
 
 	server.Start()
 	// go server.Start()
